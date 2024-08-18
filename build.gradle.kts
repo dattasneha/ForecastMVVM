@@ -3,7 +3,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     val kotlinVersion by extra {"1.9.10"}
-    val roomVersion by extra {"2.1.0-alpha01"}
+    val roomVersion by extra {"2.6.1"}
     val navigationVersion by extra {"2.7.7"}
     val kodeinVersion by extra {"5.2.0"}
     val lifecycleVersion by extra {"2.0.0"}

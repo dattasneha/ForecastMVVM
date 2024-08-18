@@ -9,6 +9,7 @@ import com.example.forecastmvvm.data.db.entity.CurrentWeatherEntry
 @Database(
     entities = [CurrentWeatherEntry::class],
     version = 1
+    
 )
 abstract class ForecastDatabase: RoomDatabase(){
     abstract fun currentWeatherDao(): CurrentWeatherDao
