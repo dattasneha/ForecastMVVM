@@ -30,23 +30,14 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
     ): View? {
         return inflater.inflate(R.layout.fragment_current_weather, container, false)
     }
-    private val group_loading =
-        requireView().findViewById<Group>(R.id.group_loading)
-    private val textView_temperature =
-        requireView().findViewById<TextView>(R.id.textView_temperature)
-    private val textView_feelsLike =
-        requireView().findViewById<TextView>(R.id.textView_feels_like_temperature)
-    private val textView_condition =
-        requireView().findViewById<TextView>(R.id.textView_condition)
-    private val textView_precipitation =
-        requireView().findViewById<TextView>(R.id.textView_precipitation)
-    private val textView_wind =
-        requireView().findViewById<TextView>(R.id.textView_wind)
-    private val textView_visibility =
-        requireView().findViewById<TextView>(R.id.textView_visibility)
-    private val imageView_condition_icon =
-        requireView().findViewById<ImageView>(R.id.imageView_condition_icon)
-
+    private lateinit var grouploading : Group
+    private lateinit var textView_temperature:TextView
+    private lateinit var textView_feelsLike :TextView
+    private lateinit var textView_condition :TextView
+    private lateinit var textView_precipitation :TextView
+    private lateinit var textView_wind :TextView
+    private lateinit var textView_visibility :TextView
+    private lateinit var imageView_condition_icon :ImageView
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -73,14 +64,18 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
         currentWeather.observe(viewLifecycleOwner,Observer{
 
             if(it == null) return@Observer
-            group_loading.visibility = View.GONE
-            updateLocation("Los Angeles")
+            grouploading = requireView().findViewById(R.id.group_loading)
+            grouploading.visibility = View.GONE
+            updateLocation("Kolkata")
             updateDateToToday()
             updateTemperatures(it.temperature, it.feelsLikeTemperature)
             updateCondition(it.conditionText)
             updatePrecipitation(it.precipitationVolume)
             updateWind(it.windDirection, it.windSpeed)
             updateVisibility(it.visibilityDistance)
+
+            imageView_condition_icon =
+                requireView().findViewById<ImageView>(R.id.imageView_condition_icon)
 
             GlideApp.with(this@CurrentWeatherFragment)
                 .load("http:${it.conditionIconUrl}")
@@ -97,25 +92,37 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
         (activity as AppCompatActivity)?.supportActionBar?.subtitle = "Today"
     }
     private fun updateTemperatures(temperature:Double,feelsLike:Double){
+        textView_temperature =
+            requireView().findViewById<TextView>(R.id.textView_temperature)
+        textView_feelsLike =
+            requireView().findViewById<TextView>(R.id.textView_feels_like_temperature)
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("°C","°F")
         textView_temperature.text = "$temperature$unitAbbreviation"
         textView_feelsLike.text ="$feelsLike$unitAbbreviation"
     }
     private fun updateCondition(condition: String) {
+        textView_condition =
+            requireView().findViewById<TextView>(R.id.textView_condition)
         textView_condition.text = condition
     }
 
     private fun updatePrecipitation(precipitationVolume: Double) {
+        textView_precipitation =
+            requireView().findViewById<TextView>(R.id.textView_precipitation)
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("mm", "in")
         textView_precipitation.text = "Preciptiation: $precipitationVolume $unitAbbreviation"
     }
 
     private fun updateWind(windDirection: String, windSpeed: Double) {
+        textView_wind =
+            requireView().findViewById<TextView>(R.id.textView_wind)
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("kph", "mph")
         textView_wind.text = "Wind: $windDirection, $windSpeed $unitAbbreviation"
     }
 
     private fun updateVisibility(visibilityDistance: Double) {
+        textView_visibility =
+            requireView().findViewById<TextView>(R.id.textView_visibility)
         val unitAbbreviation = chooseLocalizedUnitAbbreviation("km", "mi.")
         textView_visibility.text = "Visibility: $visibilityDistance $unitAbbreviation"
     }
