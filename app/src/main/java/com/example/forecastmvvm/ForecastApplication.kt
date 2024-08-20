@@ -8,6 +8,8 @@ import com.example.forecastmvvm.data.network.ConnectivityInterceptor
 import com.example.forecastmvvm.data.network.ConnectivityInterceptorImpl
 import com.example.forecastmvvm.data.network.weatherNetworkDataSource
 import com.example.forecastmvvm.data.network.weatherNetworkDataSourceImpl
+import com.example.forecastmvvm.data.provider.UnitProvider
+import com.example.forecastmvvm.data.provider.UnitProviderImpl
 import com.example.forecastmvvm.data.repository.ForeCastRepository
 import com.example.forecastmvvm.data.repository.ForeCastRepositoryImpl
 import com.example.forecastmvvm.ui.weather.Current.CurrentWeatherViewModelFactory
@@ -29,7 +31,8 @@ class ForecastApplication:Application(),KodeinAware {
         bind() from singleton { ApixuWeatherApiService(instance()) }
         bind<weatherNetworkDataSource>() with singleton { weatherNetworkDataSourceImpl(instance()) }
         bind<ForeCastRepository>() with singleton { ForeCastRepositoryImpl(instance(),instance())}
-        bind() from provider { CurrentWeatherViewModelFactory(instance()) }
+        bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
+        bind() from provider { CurrentWeatherViewModelFactory(instance(),instance()) }
     }
 
     override fun onCreate() {
