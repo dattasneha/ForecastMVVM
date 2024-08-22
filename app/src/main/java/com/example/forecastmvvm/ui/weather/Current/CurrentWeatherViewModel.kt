@@ -8,13 +8,16 @@ import com.example.forecastmvvm.internal.lazyDeffered
 
 class CurrentWeatherViewModel(
     private val foreCastRepository: ForeCastRepository,
-    unitProvider: UnitProvider
+    private val unitProvider: UnitProvider
 ) : ViewModel() {
     private val unitSystem = unitProvider.getUnitSystem()
     val isMetric:Boolean
         get() = unitSystem == UnitSystem.METRIC
     val weather by lazyDeffered {
         foreCastRepository.getCurrentWeather(isMetric)
+    }
+    val weatherLocation by lazyDeffered {
+        foreCastRepository.getWeatherLocation()
     }
 
 }

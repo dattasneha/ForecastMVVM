@@ -1,5 +1,6 @@
 package com.example.forecastmvvm.ui.weather.Current
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,10 +40,10 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
     private lateinit var textView_visibility :TextView
     private lateinit var imageView_condition_icon :ImageView
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this,viewModelFactory)
-            .get(CurrentWeatherViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(this,viewModelFactory)[CurrentWeatherViewModel::class.java]
 
         bindUI()
         // TODO: Use the ViewModel
@@ -60,13 +61,19 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
 
     private fun bindUI() = launch{
         val currentWeather = viewModel.weather.await()
+        val weatherLocation = viewModel.weatherLocation.await()
+
+        weatherLocation.observe(viewLifecycleOwner,Observer{
+            if(it == null) return@Observer
+            updateLocation(it.name)
+        })
 
         currentWeather.observe(viewLifecycleOwner,Observer{
 
             if(it == null) return@Observer
             grouploading = requireView().findViewById(R.id.group_loading)
             grouploading.visibility = View.GONE
-            updateLocation("Kolkata")
+
             updateDateToToday()
             updateTemperatures(it.temperature, it.feelsLikeTemperature)
             updateCondition(it.conditionText)
@@ -86,12 +93,13 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
         return if (viewModel.isMetric) metric else imperial
     }
     private fun updateLocation(location:String){
-        (activity as AppCompatActivity)?.supportActionBar?.title = location
+        (activity as AppCompatActivity).supportActionBar?.title = location
     }
     private fun updateDateToToday(){
-        (activity as AppCompatActivity)?.supportActionBar?.subtitle = "Today"
+        (activity as AppCompatActivity).supportActionBar?.subtitle = "Today"
     }
-    private fun updateTemperatures(temperature:Double,feelsLike:Double){
+    @SuppressLint("SetTextI18n")
+    private fun updateTemperatures(temperature:Double, feelsLike:Double){
         textView_temperature =
             requireView().findViewById(R.id.textView_temperature)
         textView_feelsLike =
@@ -106,6 +114,7 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
         textView_condition.text = condition
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updatePrecipitation(precipitationVolume: Double) {
         textView_precipitation =
             requireView().findViewById(R.id.textView_precipitation)
@@ -113,6 +122,7 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
         textView_precipitation.text = "Preciptiation: $precipitationVolume $unitAbbreviation"
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateWind(windDirection: String, windSpeed: Double) {
         textView_wind =
             requireView().findViewById(R.id.textView_wind)
@@ -120,6 +130,7 @@ class CurrentWeatherFragment :ScopedFragment(), KodeinAware{
         textView_wind.text = "Wind: $windDirection, $windSpeed $unitAbbreviation"
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateVisibility(visibilityDistance: Double) {
         textView_visibility =
             requireView().findViewById(R.id.textView_visibility)

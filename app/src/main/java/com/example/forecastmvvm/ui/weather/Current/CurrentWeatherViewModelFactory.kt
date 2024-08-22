@@ -11,6 +11,6 @@ class CurrentWeatherViewModelFactory(
 ):ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHEKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CurrentWeatherViewModel(foreCastRepository,unitProvider) as T
+        return CurrentWeatherViewModel(foreCastRepository,unitProvider)  as T
     }
 }
